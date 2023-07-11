@@ -1,5 +1,4 @@
 const jwt = require('jsonwebtoken');
-require('dotenv').config();
 
 module.exports = (req, res, next) => {
   if (!req.headers['authorization']) return res.send('Unauthorized');
@@ -9,13 +8,17 @@ module.exports = (req, res, next) => {
 
   const token = bearerToken[1];
 
-  jwt.verify(token, process.env.JWTSECRET, (err, payload) => {
-    if (err) {
-      return res.status(401).send('Unauthorized');
-    }
-    req.user = payload;
+  jwt.verify(
+    token,
+    process.env.JWT_SECRET || 'somethingsecret',
+    (err, decode) => {
+      if (err) {
+        return res.status(401).send('Unauthorized');
+      }
+      req.user = decode;
 
-    // console.log(req.user);
-    next();
-  });
+      // console.log(req.user);
+      next();
+    }
+  );
 };

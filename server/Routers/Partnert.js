@@ -42,7 +42,12 @@ router.get('/', async (req, res) => {
     const allPublications = await pool.query(`SELECT * FROM  partners`);
     res.json(allPublications.rows);
   } catch (err) {
-    console.error(err.message);
+    if (err) throw err;
+
+    return res.json({
+      status: 'error',
+    });
+    // console.error(err.message);
   }
 });
 //LIMIT 5 OFFSET 1

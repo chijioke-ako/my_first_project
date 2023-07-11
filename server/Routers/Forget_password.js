@@ -8,7 +8,7 @@ const nodemailer = require('nodemailer');
 
 const saltRounds = 10;
 
-//reset password post
+// //reset password post
 router.post('/', async (req, res) => {
   const { email } = req.body;
 
@@ -45,8 +45,8 @@ router.post('/', async (req, res) => {
           to: 'kingchiji89@gmail.com',
           subject: 'Password Reset',
 
-          html: `We heard that you just lost the password <p> Don't worry, use the link below to reset it</p>
-            This link valid for 15 minutes  http://localhost:3000/forget_password/${result.rows[0].id}/${token}
+          html: `<p>We heard that you just lost your password</p> <p> Don't worry, use the link below to reset it</p>
+            <a>This link valid for 15 minutes</a> http://localhost:3000/forget_password/${result.rows[0].id}/${token}
           `,
         };
 
@@ -64,7 +64,7 @@ router.post('/', async (req, res) => {
   );
 });
 
-//verify user for forgot password time
+// //verify user for forgot password time
 router.get('/rest-password/:id/:token', (req, res) => {
   const { id, token } = req.params;
 
@@ -84,7 +84,7 @@ router.get('/rest-password/:id/:token', (req, res) => {
   });
 });
 
-/* update password to database */
+// /* update password to database */
 router.post('/rest-password/:id/:token', (req, res) => {
   const { id, token } = req.params;
   const { password } = req.body;

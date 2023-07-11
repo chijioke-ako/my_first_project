@@ -2,53 +2,35 @@ require('dotenv').config();
 const express = require('express');
 const router = express.Router();
 const pool = require('../db');
-const authenticate = require('../middleware/authoriztion');
+
 const bcrypt = require('bcrypt');
-const jwt = require('jsonwebtoken');
+const expressAsyncHandler = require('express-async-handler');
+const generateToken = require('../middleware/generate');
 
-router.post('/', async (req, res) => {
-  const { email, password } = req.body;
+router.post(
+  '/',
+  expressAsyncHandler(async (req, res) => {
+    const { email } = req.body;
 
-  pool.query(
-    'SELECT * FROM users WHERE email = $1 ',
-    [email],
+    const user = await pool.query('SELECT * FROM users WHERE email = $1 ', [
+      email,
+    ]);
 
-    (err, result) => {
-      if (err) {
-        res.send({ err: err });
-      }
-
-      if (result.rows.length > 0) {
-        bcrypt.compare(password, result.rows[0].password, (err, done) => {
-          if (done) {
-            const id = result.rows[0].id;
-            const role = result.rows[0].role;
-
-            const token = jwt.sign({ id, role }, process.env.JWTSECRET, {
-              expiresIn: '1h',
-            });
-            // req.session.user = result.rows[0];
-
-            res.status(201).json({
-              status: 'Login Successfully ! ',
-              auth: true,
-              token: token,
-
-              data: {
-                user: result.rows[0],
-              },
-            });
-          } else {
-            res
-              .status(400)
-              .json({ data: 'wrong email or password please check' });
-          }
+    if (user.rows) {
+      if (bcrypt.compareSync(req.body.password, user.rows[0].password)) {
+        res.send({
+          id: user.rows[0].id,
+          firstname: user.rows[0].firstname,
+          email: user.rows[0].email,
+          isAdmin: user.rows[0].role,
+          token: generateToken(user),
         });
-      } else {
-        res.status(400).json({ data: "user doesn't exist " });
+        return;
       }
     }
-  );
-});
+
+    res.status(401).send({ message: 'wrong email or password please check' });
+  })
+);
 
 module.exports = router;

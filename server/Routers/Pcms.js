@@ -1,20 +1,27 @@
-const express = require('express');
-const router = express.Router();
+const router = require('express').Router();
+const pool = require('../db');
 
-router.get('/', (req, res) => {
-  res.send({ data: 'here is your data' });
-});
+//post pcms
+router.post('/', async (req, res) => {
+  const { name, company, telephone, email } = req.body;
 
-router.post('/', (req, res) => {
-  res.send({ data: ' create' });
-});
+  pool.query(
+    'INSERT INTO pcms (name , company,telephone,email) VALUES ($1, $2, $3, $4) RETURNING *',
+    [name, company, telephone, email],
 
-router.put('/', (req, res) => {
-  res.send({ data: ' update' });
-});
-
-router.delete('/', (req, res) => {
-  res.send({ data: 'here is your data' });
+    (err, results) => {
+      if (!name || !telephone || !email) {
+        return res.status(400).json({ msg: 'Please fill all fields' });
+      } else {
+        res.status(201).json({
+          status: 'Pcms Submit Successfully ! ',
+          data: {
+            pcms: results.rows[0],
+          },
+        });
+      }
+    }
+  );
 });
 
 module.exports = router;

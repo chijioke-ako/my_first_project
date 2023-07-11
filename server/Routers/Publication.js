@@ -41,6 +41,7 @@ router.get('/', async (req, res) => {
     const allPublications = await pool.query('SELECT * FROM  publications ');
     res.json(allPublications.rows);
   } catch (err) {
+    res.status(400).send({ message: 'fail !!!' });
     console.error(err.message);
   }
 });
@@ -52,13 +53,9 @@ router.get('/:id', async (req, res) => {
       'SELECT * FROM publications WHERE id = $1',
       [req.params.id]
     );
-    res.status(200).json({
-      status: ' Successfully !',
-      data: {
-        publications: results.rows[0],
-      },
-    });
+    res.status(200).send({ data: results.rows[0] });
   } catch (err) {
+    res.status(400).send({ message: 'publication not found !!!' });
     console.error(err.message);
   }
 });

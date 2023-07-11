@@ -75,7 +75,7 @@ router.post('/', upload.single('resume'), (req, res) => {
         return res.status(400).json({ msg: 'Please fill all fields' });
       } else {
         res.status(201).json({
-          status: 'Resume  Submit Successfully !',
+          status: 'Resume Submit Successfully !',
           data: {
             resumes: results.rows[0],
           },

@@ -2,10 +2,12 @@ require('dotenv').config();
 const cors = require('cors');
 const morgan = require('morgan');
 const bodyParser = require('body-parser');
+const dotenv = require('dotenv');
 const express = require('express');
 
+dotenv.config();
+
 const app = express();
-const PORT = process.env.PORT || 8000;
 
 // app.use(cors());
 //Allow origin Access origin and method
@@ -35,8 +37,9 @@ const publicationRouter = require('./Routers/Publication');
 const usersRouter = require('./Routers/Users');
 const resumeRouter = require('./Routers/resume');
 const signupRouter = require('./Routers/Sginup');
-const verifyRouter = require('./Routers/auth');
+// const verifyRouter = require('./Routers/auth');
 const adminRouter = require('./Routers/admin');
+const recaptchaRouter = require('./Routers/recapca');
 
 app.use('/api/archment', archmentRouter);
 app.use('/api/contact', contactRouter);
@@ -54,8 +57,9 @@ app.use('/api/publications', publicationRouter);
 app.use('/api/users', usersRouter);
 app.use('/api/resume', resumeRouter);
 app.use('/api/register', signupRouter);
-app.use('/api/verify', verifyRouter);
+// app.use('/api/verify', verifyRouter);
 app.use('/api/admin', adminRouter);
+app.use('/api/recap', recaptchaRouter);
 
 app.listen(PORT, () => {
   console.log(`server listening on port ${PORT}`);
